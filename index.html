@@ -54,6 +54,13 @@
   .credit{font-size:.7rem;color:var(--doux);margin:4px 0 12px}
   .lettres{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
   .lettres .option{text-align:center;font-weight:800;margin:0}
+  .qr-tag{display:inline-block;font-size:.75rem;color:var(--accent);background:var(--accent-clair);border-radius:6px;padding:2px 8px;margin-bottom:8px}
+  .qr-q{white-space:pre-line;font-weight:600;margin:0 0 10px}
+  .qr-zone{width:100%;min-height:110px;font:inherit;border:1px solid var(--bord);border-radius:12px;padding:10px;background:#fff;resize:vertical}
+  .qr-rep{white-space:pre-line;background:var(--vert-clair);border-radius:12px;padding:12px;margin-top:12px}
+  .auto{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .auto .option{width:auto;flex:1 1 150px;text-align:center;margin:0}
+  .qr-credit{font-size:.72rem;color:var(--doux);margin-top:10px}
   footer{color:var(--doux);font-size:.8rem;text-align:center;margin:40px 0 16px}
 
   /* Activités */
@@ -145,6 +152,14 @@
             <button class="act" data-act="chaine"><b>La chaîne</b><i>★ 5 questions</i></button>
             <button class="act examen" data-act="lien"><b>Le bon lien <span class="badge">Épreuve</span></b><i>★ 5 questions</i></button>
           </div></div>
+      </div>
+    </section>
+
+    <section class="bloc">
+      <div class="bloc-titre"><div class="num">4</div><h2>RÉDIGER</h2><span>Comme à l'épreuve : tu écris, puis tu compares</span></div>
+      <div class="grille">
+        <div class="oi"><h3>Questions d'examen</h3><div class="desc">Toutes les opérations intellectuelles, réponse rédigée</div>
+          <div class="acts"><button class="act examen" data-act="qr"><b>Questions d'examen <span class="badge">Épreuve</span></b><i>★ 5 questions</i></button></div></div>
       </div>
     </section>
 
@@ -452,16 +467,53 @@ const PAREIL = [
     expl: "Les deux veulent affirmer l'autonomie du Canada ; Laurier le fait toutefois sans rejeter les liens avec l'Empire." }
 ];
 
+/* « Questions d'examen » : questions à réponse rédigée (banque HQC du CSSBF),
+   sans documents, corrigés vérifiés et au besoin corrigés d'après le cahier. */
+const QR = [
+  { page: 116, oi: "Établir des faits", q: "Indiquez le nom du premier ministre qui dirige le gouvernement canadien de 1896 à 1911.", rep: "Wilfrid Laurier." },
+  { page: 118, oi: "Déterminer des causes et des conséquences", q: "Indiquez une conséquence de la demande d'appui militaire du Royaume-Uni lors de la guerre des Boers sur la vie politique canadienne.", rep: "Des débats mouvementés opposent les impérialistes, qui veulent participer, et les nationalistes canadiens-français, comme Henri Bourassa, qui s'y opposent." },
+  { page: 118, oi: "Établir des liens de causalité", q: "Expliquez comment le débat entourant la guerre des Boers amène le gouvernement Laurier à adopter une position de compromis.\n• Le conflit auquel le Royaume-Uni demande au Canada de participer en 1899\n• Les positions qui s'affrontent au Canada\n• La décision du gouvernement Laurier", rep: "En 1899, le Royaume-Uni demande l'appui militaire du Canada dans la guerre des Boers. Les impérialistes souhaitent que le Canada participe, alors que les nationalistes canadiens-français s'y opposent. Laurier adopte un compromis : il appuie la participation, mais n'impose pas la conscription et n'envoie que des volontaires." },
+  { page: 122, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le gouvernement fédéral crée les provinces de l'Alberta et de la Saskatchewan en 1905.", rep: "L'afflux d'immigrants dans l'Ouest canadien : la population de la région augmente et le territoire agricole s'agrandit." },
+  { page: "121 et 122", oi: "Établir des liens de causalité", q: "Expliquez comment la politique de peuplement de l'Ouest amène le gouvernement fédéral à modifier le territoire canadien en 1905.\n• La politique de peuplement de l'Ouest\n• La situation démographique des Prairies\n• Une modification du territoire canadien en 1905", rep: "Le gouvernement Laurier relance l'immigration pour coloniser l'Ouest (terres gratuites, traversée payée, bureaux d'immigration en Europe). De nombreux immigrants s'installent dans les Prairies, dont la population augmente rapidement. En 1905, le gouvernement crée l'Alberta et la Saskatchewan." },
+  { page: 129, oi: "Déterminer des causes et des conséquences", q: "Indiquez une conséquence de l'exploitation accrue des ressources naturelles sur certaines régions du Québec au début du 20e siècle.", rep: "Les régions riches en ressources naturelles connaissent un essor important." },
+  { page: 128, oi: "Établir des liens de causalité", q: "Expliquez comment le développement d'une nouvelle source d'énergie contribue à l'essor industriel du Québec au début du 20e siècle.\n• Une nouvelle source d'énergie\n• L'émergence de nouveaux secteurs industriels\n• Une conséquence sur l'activité industrielle", rep: "Grâce à ses rivières au débit élevé, le Québec développe l'hydroélectricité. De nouveaux secteurs se développent, comme les pâtes et papiers, l'électrochimie et la transformation des minerais. Ces secteurs connaissent une croissance forte et soutenue." },
+  { page: 136, oi: "Déterminer des causes et des conséquences", q: "Indiquez une conséquence de la concentration de l'industrie hydroélectrique entre les mains de quelques entreprises, selon Philippe Hamel.", rep: "Un trust (monopole) contrôle l'électricité : ces entreprises exercent une telle puissance que même les administrations publiques subissent leur influence." },
+  { page: 137, oi: "Établir des liens de causalité", q: "Expliquez comment les conditions de travail des ouvriers poussent les gouvernements à adopter des mesures au début du 20e siècle.\n• Les conditions de travail des ouvriers\n• Les revendications des syndicats\n• Une mesure adoptée par le gouvernement", rep: "Les conditions de travail des ouvriers restent très difficiles et ils sont souvent démunis face à leurs employeurs. Les syndicats exigent des gouvernements des lois en faveur des ouvriers. Le gouvernement du Québec adopte notamment la Loi des accidents de travail en 1909." },
+  { page: 138, oi: "Établir des faits", q: "Indiquez un moyen utilisé par certains syndicats pour améliorer les conditions de travail au début du 20e siècle.", rep: "La grève, pour exercer une pression sur les entreprises et le gouvernement." },
+  { page: 113, oi: "Établir des faits", q: "Indiquez le nom de l'organisation syndicale catholique fondée au Québec en 1921.", rep: "La Confédération des travailleurs catholiques du Canada (CTCC)." },
+  { page: 139, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle l'Église catholique adopte une doctrine sociale au début du 20e siècle.", rep: "Elle s'inquiète des effets du monde industriel : la croissance des inégalités sociales et l'influence des syndicats, qui pourraient compromettre l'ordre social." },
+  { page: 144, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle on réclame la fréquentation scolaire obligatoire au Québec au début du 20e siècle.", rep: "La faible scolarisation des francophones : la grande majorité des jeunes francophones ne terminent pas leur cours primaire et quittent l'école vers l'âge de 12 ans." },
+  { page: 144, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le projet de loi sur la fréquentation scolaire obligatoire de 1901 est rejeté.", rep: "Sous l'influence de l'Église, qui y voit une menace pour son rôle en éducation." },
+  { page: 144, oi: "Déterminer des changements et des continuités", q: "Indiquez un changement dans le monde agricole québécois au début du 20e siècle.", rep: "Les travaux se mécanisent grâce à la machinerie, notamment le tracteur ; les techniques s'améliorent grâce à des formations spécialisées, comme l'école d'agriculture d'Oka." },
+  { page: 154, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le gouvernement canadien instaure la conscription en 1917.", rep: "Les pertes sont importantes en Europe et les volontaires ne suffisent plus à renouveler les troupes." },
+  { page: 154, oi: "Déterminer des changements et des continuités", q: "Indiquez un changement concernant le recrutement des soldats canadiens entre 1914 et 1917.", rep: "Le recrutement passe du volontariat à la conscription (Loi du service militaire de 1917)." },
+  { page: 154, oi: "Établir des liens de causalité", q: "Expliquez comment la situation au front pendant la Première Guerre mondiale divise la population canadienne.\n• La situation au front en Europe\n• Une mesure adoptée par le gouvernement canadien en 1917\n• Une réaction au Québec", rep: "Les pertes en vies humaines sont importantes en Europe et il faut renouveler les troupes. Le gouvernement adopte la Loi du service militaire, qui impose la conscription. Une bonne partie de la population francophone s'y oppose : de nombreuses manifestations ont lieu au Québec en 1917 et 1918." },
+  { page: 156, oi: "Établir des liens de causalité", q: "Expliquez comment la participation du Canada à la Première Guerre mondiale contribue à un changement de son statut.\n• La participation du Canada à la guerre\n• Une manifestation de l'autonomie croissante du Canada\n• Un changement du statut du Canada", rep: "Le Canada joue un rôle très actif dans la guerre et y apporte une contribution exceptionnelle. Il est représenté à la Société des Nations en tant que pays et signe le traité de Versailles. En 1931, le Statut de Westminster lui accorde une autonomie quasi complète." },
+  { page: 156, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le gouvernement fédéral organise des programmes de démobilisation après la Première Guerre mondiale.", rep: "Pour faciliter la réintégration des soldats dans la vie civile ; on leur offre généralement des terres et des pensions." },
+  { page: "160 et 161", oi: "Déterminer des changements et des continuités", q: "Indiquez un changement dans l'économie du Canada entre les années 1920 et les années 1930.", rep: "L'économie passe d'une période de prospérité (les Années folles) à une grave crise économique (la Grande Dépression)." },
+  { page: 158, oi: "Établir des faits", q: "Indiquez le nom d'un sport professionnel qui soulève la passion des Canadiens français pendant les Années folles.", rep: "Le hockey (le Club de hockey Canadien de Montréal)." },
+  { page: 158, oi: "Dégager des différences et des similitudes", q: "Indiquez une similitude entre la radio et le cinéma au début du 20e siècle.", rep: "Les deux sont des manifestations de la culture de masse : ce sont des divertissements de plus en plus populaires destinés à un vaste public." },
+  { page: 164, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle l'économiste John Maynard Keynes défend l'intervention de l'État dans l'économie.", rep: "Pour atténuer les irrégularités des cycles économiques et mieux prévenir les ralentissements, comme celui de la Grande Dépression." },
+  { page: 168, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle l'École sociale populaire publie le Programme de restauration sociale en 1933.", rep: "Elle croit que les abus du capitalisme ont engendré la Grande Dépression ; elle revendique une répartition plus équitable des richesses." },
+  { page: 168, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle certains nationalistes veulent que les Canadiens français investissent dans les affaires.", rep: "Pour que la nation canadienne-française dépende moins économiquement des anglophones et prenne en main son économie." },
+  { page: 163, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le gouvernement du Québec favorise le « retour à la terre » pendant la Grande Dépression.", rep: "Pour contrer le chômage et la pauvreté engendrés par la crise (nouveau programme de colonisation de régions comme l'Abitibi en 1935)." },
+  { page: 172, oi: "Dégager des différences et des similitudes", q: "Indiquez une similitude entre l'application de la Loi sur les mesures de guerre pendant les deux guerres mondiales.", rep: "Dans les deux cas, la loi donne au gouvernement fédéral le pouvoir d'adopter toutes les mesures jugées indispensables à l'effort de guerre." },
+  { page: 172, oi: "Déterminer des causes et des conséquences", q: "Indiquez une raison pour laquelle le gouvernement fédéral interne de nombreux Canadiens originaires de pays ennemis pendant la Seconde Guerre mondiale.", rep: "Il considère qu'ils pourraient représenter une menace pour le Canada." },
+  { page: 172, oi: "Établir des liens de causalité", q: "Expliquez comment la situation pendant la Seconde Guerre mondiale amène le gouvernement à imposer la conscription.\n• La situation de l'armée canadienne\n• Une mesure adoptée par le gouvernement en 1942\n• Une décision du gouvernement en 1944", rep: "Après avoir promis de ne pas imposer la conscription, le gouvernement finit par manquer de volontaires. En 1942, il organise un plébiscite pour être libéré de sa promesse ; les Canadiens anglais, majoritaires, acceptent. En 1944, il impose la conscription." },
+  { page: 173, oi: "Établir des liens de causalité", q: "Expliquez comment la participation du Canada à la Seconde Guerre mondiale amène le gouvernement fédéral à intervenir dans les finances publiques.\n• La participation du Canada à la guerre\n• Les dépenses du gouvernement fédéral\n• Un moyen de financement", rep: "Dès 1939, le Canada mobilise l'ensemble de ses ressources pour l'effort de guerre. Ses dépenses militaires passent de 35 millions de dollars en 1938 à 4242 millions en 1943. Il emprunte auprès des banques, ce qui alourdit la dette, et émet des obligations de la Victoire." },
+  { page: "156 et 173", oi: "Déterminer des changements et des continuités", q: "Indiquez une continuité concernant le retour des soldats après les deux guerres mondiales.", rep: "Après chacune des guerres, le gouvernement procède à une démobilisation des soldats, et plusieurs anciens combattants doivent composer avec des séquelles physiques et psychologiques." }
+];
+
 const melanger = t => { const c=[...t]; for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];} return c; };
 const $ = id => document.getElementById(id);
 let etat = null;
 
 function ouvrir(type){
   $("accueil").style.display="none"; $("activite").style.display="block";
-  const T={chaine:["La chaîne","Liens de causalité"],lien:["Le bon lien","Liens de causalité"],
+  const T={qr:["Questions d'examen","Réponse rédigée"],chaine:["La chaîne","Liens de causalité"],lien:["Le bon lien","Liens de causalité"],
            cc:["Cause ou conséquence ?","Causes et conséquences"],carte:["Sur la carte","Situer dans l'espace"],vf:["Vrai ou faux ?","Établir des faits"],temps:["Mets en ordre","Situer dans le temps"],paires:["Les paires","Mettre en relation des faits"],pareil:["Pareil ou pas ?","Différences et similitudes"],chg:["Ça change ?","Changements et continuités"]};
   $("act-titre").textContent=T[type][0]; $("act-oi").textContent=T[type][1];
-  const src={chaine:CHAINES,lien:LIENS,cc:CC,chg:CHG,vf:VF,temps:TEMPS,paires:PAIRES,pareil:PAREIL,carte:CARTE}[type];
+  const src={qr:QR,chaine:CHAINES,lien:LIENS,cc:CC,chg:CHG,vf:VF,temps:TEMPS,paires:PAIRES,pareil:PAREIL,carte:CARTE}[type];
   etat = { type, i:0, score:0, ordre: melanger(src.map((_,k)=>k)).slice(0,5) };
   question();
 }
@@ -473,7 +525,7 @@ function question(){
   etoiles();
   if(etat.i>=etat.ordre.length) return fin();
   const n = etat.ordre[etat.i];
-  ({chaine:()=>chaine(CHAINES[n]), lien:()=>lien(LIENS[n]),
+  ({qr:()=>qr(QR[n]), chaine:()=>chaine(CHAINES[n]), lien:()=>lien(LIENS[n]),
     carte:()=>carte(CARTE[n]), vf:()=>binaire(VF[n],["vrai","faux"]), pareil:()=>binaire(PAREIL[n],["pareil","différent"]),
     temps:()=>temps(TEMPS[n]), paires:()=>paires(PAIRES[n]), cc:()=>binaire(CC[n],["cause","conséquence"]), chg:()=>binaire(CHG[n],["changement","continuité"])})[etat.type]();
 }
@@ -596,6 +648,25 @@ function paires(q){
       <br><small>Revois ${typeof q.page==='string'?'les pages':'la page'} ${q.page} de ton cahier.</small></div><button class="suivant">Suivant ›</button>`;
     etoiles(); $("retro").querySelector(".suivant").onclick=()=>{etat.i++;question();};
   });
+}
+
+function qr(q){
+  const corps=$("act-corps");
+  corps.innerHTML = `<span class="qr-tag">${q.oi}</span>
+    <p class="qr-q">${q.q}</p>
+    <textarea class="qr-zone" aria-label="Ta réponse" placeholder="Écris ta réponse ici, comme à l'examen (rien n'est enregistré)."></textarea>
+    <button class="suivant" id="voir">Voir le corrigé</button>
+    <div id="retro"></div>
+    <div class="qr-credit">Question tirée de la banque HQC du CSSBF ; corrigé vérifié avec ton cahier.</div>`;
+  $("voir").onclick=()=>{
+    $("voir").remove();
+    $("retro").innerHTML=`<div class="qr-rep"><b>Corrigé</b><br>${q.rep}<br><small>Revois ${typeof q.page==='string'?'les pages':'la page'} ${q.page} de ton cahier.</small></div>
+      <div class="question">Compare avec ta réponse. Honnêtement :</div>
+      <div class="auto"><button class="option" data-v="1">J'avais bon</button><button class="option" data-v="0.5">En partie</button><button class="option" data-v="0">Pas encore</button></div>`;
+    $("retro").querySelectorAll(".option").forEach(b=>b.onclick=()=>{
+      etat.score+= +b.dataset.v; etoiles(); etat.i++; question();
+    });
+  };
 }
 
 function fin(){
